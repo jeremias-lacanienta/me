@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Portfolio</title>
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      background: #0a0a0a;
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+      overflow: hidden;
+    }
+
+    .container {
+      position: relative;
+      width: 100%;
+      max-width: 600px;
+      aspect-ratio: 1 / 1;
+      background: #111;
+      border-radius: 12px;
+      overflow: hidden;
+      box-shadow: 0 25px 80px rgba(0, 0, 0, 0.6);
+    }
+
+    video {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      z-index: 1;
+    }
+
+    .controls {
+      position: absolute;
+      bottom: 24px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px 20px;
+      background: rgba(0, 0, 0, 0.5);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 50px;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      transition: opacity 0.3s ease;
+      z-index: 10;
+    }
+
+
+    .btn {
+      width: 44px;
+      height: 44px;
+      border: none;
+      background: transparent;
+      cursor: pointer;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      transition: transform 0.2s ease, background 0.2s ease;
+    }
+
+    .btn:hover {
+      transform: scale(1.1);
+      background: rgba(255, 255, 255, 0.1);
+    }
+
+    .btn:active {
+      transform: scale(0.95);
+    }
+
+    .btn img {
+      width: 44px;
+      height: 44px;
+      border-radius: 50%;
+      object-fit: cover;
+      pointer-events: none;
+    }
+
+    .divider {
+      width: 1px;
+      height: 24px;
+      background: rgba(255, 255, 255, 0.2);
+    }
+
+    @media (max-width: 640px) {
+      .container {
+        border-radius: 0;
+        max-width: 100%;
+        max-height: 100vh;
+        aspect-ratio: 1 / 1;
+      }
+
+      .controls {
+        bottom: 40px;
+        gap: 12px;
+        padding: 10px 16px;
+      }
+
+      .btn {
+        width: 40px;
+        height: 40px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <video id="video" muted playsinline></video>
+
+    <div class="controls" id="controls">
+      <button class="btn flag-btn" id="flagBtn" aria-label="Toggle language">
+        <img id="flagImg" src="" alt="Language">
+      </button>
+      <div class="divider"></div>
+      <button class="btn play-btn" id="playBtn" aria-label="Play pitch">
+        <img id="playImg" src="" alt="Play">
+      </button>
+    </div>
+  </div>
+
+  <script>
+    var video = document.getElementById('video');
+    var flagImg = document.getElementById('flagImg');
+    var playImg = document.getElementById('playImg');
+
+    var lang = 'es';
+    var playing = false;
+
+    function updateUI() {
+      flagImg.src = lang === 'es' ? 'flag_es.svg' : 'flag_uk.svg';
+      playImg.src = playing ? 'stop.svg' : 'play.svg';
+    }
+
+    function goIdle() {
+      playing = false;
+      updateUI();
+      video.pause();
+      video.muted = true;
+      video.loop = true;
+      video.src = 'idle.mp4';
+      video.play().catch(function(){});
+    }
+
+    function goPitch() {
+      playing = true;
+      updateUI();
+      video.pause();
+      video.muted = false;
+      video.loop = false;
+      video.src = lang === 'en' ? 'pitch_en.mp4' : 'pitch_es.mp4';
+      video.play().catch(function(){});
+    }
+
+    document.getElementById('flagBtn').onclick = function() {
+      if (playing) {
+        goIdle();
+      } else {
+        lang = lang === 'es' ? 'en' : 'es';
+        updateUI();
+      }
+    };
+
+    document.getElementById('playBtn').onclick = function() {
+      if (playing) {
+        goIdle();
+      } else {
+        goPitch();
+      }
+    };
+
+    video.onended = function() {
+      if (playing) goIdle();
+    };
+
+    video.onerror = function() {
+      // Ignore video errors
+    };
+
+    updateUI();
+    goIdle();
+  </script>
+</body>
+</html>
