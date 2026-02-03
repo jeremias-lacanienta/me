@@ -40,6 +40,7 @@
       height: 100%;
       object-fit: cover;
       z-index: 1;
+      cursor: pointer;
     }
 
     .controls {
@@ -58,6 +59,11 @@
       border: 1px solid rgba(255, 255, 255, 0.1);
       transition: opacity 0.3s ease;
       z-index: 10;
+    }
+
+    .controls.hidden {
+      opacity: 0;
+      pointer-events: none;
     }
 
 
@@ -135,6 +141,7 @@
 
   <script>
     var video = document.getElementById('video');
+    var controls = document.getElementById('controls');
     var flagImg = document.getElementById('flagImg');
     var playImg = document.getElementById('playImg');
 
@@ -144,6 +151,11 @@
     function updateUI() {
       flagImg.src = lang === 'es' ? 'flag_es.svg' : 'flag_uk.svg';
       playImg.src = playing ? 'stop.svg' : 'play.svg';
+      if (playing) {
+        controls.classList.add('hidden');
+      } else {
+        controls.classList.remove('hidden');
+      }
     }
 
     function goIdle() {
@@ -184,6 +196,10 @@
     };
 
     video.onended = function() {
+      if (playing) goIdle();
+    };
+
+    video.onclick = function() {
       if (playing) goIdle();
     };
 
